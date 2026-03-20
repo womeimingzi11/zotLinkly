@@ -1,0 +1,69 @@
+# Zotero Plugin Development For `zotlinkly`
+
+This repository now contains a thin Zotero-side bridge in:
+
+- `plugins/zotlinkly-zotero-plugin/addon`
+
+The goal of this plugin is narrow:
+
+- expose raw Zotero data over a loopback-only HTTP JSON-RPC endpoint
+- expose a simple change cursor for incremental sync
+- avoid RAG, summarization, or AI-facing MCP logic inside Zotero
+
+## What To Do First
+
+Run:
+
+```bash
+npm run zotero:dev
+```
+
+If you already know your Zotero profile directory, run:
+
+```bash
+npm run zotero:dev -- --profile-dir "/absolute/path/to/zotero/profile"
+```
+
+That command prints:
+
+- the Zotero extension id
+- the plugin source root
+- the exact extension proxy file path to create inside the Zotero profile
+
+## Source Loading Workflow
+
+This project uses Zotero source loading rather than building an `.xpi` first.
+
+The minimal workflow is:
+
+1. Close Zotero.
+2. Create an extension proxy file in the `extensions/` directory of the Zotero profile.
+3. Name the file exactly the plugin id: `zotlinkly@local`
+4. Put the absolute plugin source path into that file:
+
+```text
+/absolute/path/to/this/repo/plugins/zotlinkly-zotero-plugin/addon
+```
+
+5. Open `prefs.js` in the same Zotero profile once and delete lines containing:
+   - `extensions.lastAppBuildId`
+   - `extensions.lastAppVersion`
+6. Start Zotero again.
+
+After Zotero starts, the bridge should listen on:
+
+```text
+http://127.0.0.1:23119/rpc
+```
+
+## Expected First Checks
+
+Once the plugin is loaded, the next checks are:
+
+1. Run `npm run doctor`
+2. Confirm the Zotero side no longer reports `Zotero bridge request failed`
+3. Add or edit a Zotero item with a PDF and a note
+4. Run `npm run sync`
+5. Confirm files appear under `~/.zotlinkly/workspace/attachments` and `~/.zotlinkly/workspace/notes`
+
+Only after that should you connect Linkly indexing and test `search_evidence`.
