@@ -10,7 +10,10 @@
     "sync": "node src/cli/sync.js",
     "doctor": "node src/cli/doctor.js",
     "zotero:dev": "node src/cli/zotero-dev.js",
-    "zotero:package": "node src/cli/package-plugin.js"
+    "zotero:package": "node src/cli/package-plugin.js",
+    "zotero:validate-package": "node src/cli/validate-package.js",
+    "zotero:prepare-profile": "node src/cli/zotero-prepare-profile.js",
+    "zotero:diagnose-install": "node src/cli/zotero-diagnose-install.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.27.1",

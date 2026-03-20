@@ -15,6 +15,10 @@ test("zotero plugin manifest declares Zotero 8 compatibility", () => {
 
   assert.equal(manifest.manifest_version, 2);
   assert.equal(manifest.applications.zotero.id, "zotlinkly@zotlinkly.local");
+  assert.equal(
+    manifest.applications.zotero.update_url,
+    "https://github.com/chenhan/zotLinkly/releases/latest/download/updates.json",
+  );
   assert.equal(manifest.applications.zotero.strict_min_version, "6.999");
-  assert.equal(manifest.applications.zotero.strict_max_version, "9.*");
+  assert.equal(manifest.applications.zotero.strict_max_version, "8.0.*");
 });

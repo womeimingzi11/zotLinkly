@@ -22,10 +22,13 @@ This plugin follows Zotero's bootstrap-extension shape:
 Run:
 
 ```bash
-npm run zotero:dev
+npm run zotero:validate-package
+npm run zotero:prepare-profile
 ```
 
-If you already know your Zotero profile directory, run:
+Then launch Zotero with the command printed by `npm run zotero:prepare-profile`.
+
+If you already know your Zotero profile directory and still want source loading, run:
 
 ```bash
 npm run zotero:dev -- --profile-dir "/absolute/path/to/zotero/profile"
@@ -36,6 +39,47 @@ That command prints:
 - the Zotero extension id
 - the plugin source root
 - the exact extension proxy file path to create inside the Zotero profile
+
+## Package Install Workflow
+
+The default validation path is now package-based and uses an isolated profile under `~/.zotlinkly/zotero-dev-profile`.
+
+Run:
+
+```bash
+npm run zotero:validate-package
+```
+
+That command:
+
+- builds the `.xpi`
+- writes `dist/updates.json`
+- writes `dist/release-metadata.json`
+- validates that the package contains `manifest.json`, `bootstrap.js`, `prefs.js`, and `content/scripts/zotlinkly-zotero-plugin.js`
+
+Then run:
+
+```bash
+npm run zotero:prepare-profile
+```
+
+That command:
+
+- resets the isolated dev profile cache files
+- copies the packaged `.xpi` into the profile `extensions/` directory
+- prints the exact Zotero launch command with `-profile -purgecaches -jsdebugger -ZoteroDebugText`
+
+After Zotero starts, inspect the install state with:
+
+```bash
+npm run zotero:diagnose-install
+```
+
+Expected hard checks:
+
+1. `extensions.json` includes `zotlinkly@zotlinkly.local`
+2. `127.0.0.1:23121` is listening
+3. `npm run doctor` reports `zotero: ok`
 
 ## Source Loading Workflow
 
@@ -75,12 +119,18 @@ Once the plugin is loaded, the next checks are:
 
 Only after that should you connect Linkly indexing and test `search_evidence`.
 
-## Fallback: Build An `.xpi`
+## Release Artifacts
 
-If source loading is not picked up by Zotero on a given machine, package the addon instead:
+Package generation now produces:
 
 ```bash
 npm run zotero:package
 ```
 
-That writes an `.xpi` into `dist/`, using the plugin id as the filename.
+That writes:
+
+- `dist/zotlinkly@zotlinkly.local.xpi`
+- `dist/updates.json`
+- `dist/release-metadata.json`
+
+The manifest inside the packaged `.xpi` includes `applications.zotero.update_url`, and the release metadata includes the computed `sha256` hash for GitHub Releases publishing.

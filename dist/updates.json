@@ -1,0 +1,19 @@
+{
+  "addons": {
+    "zotlinkly@zotlinkly.local": {
+      "updates": [
+        {
+          "version": "0.1.0",
+          "update_link": "https://github.com/chenhan/zotLinkly/releases/download/v0.1.0/zotlinkly@zotlinkly.local.xpi",
+          "applications": {
+            "zotero": {
+              "strict_min_version": "6.999",
+              "strict_max_version": "8.0.*"
+            }
+          },
+          "sha256": "f265f43a2ef2606fc0c31e151c01e05ad124c6c7fb0604612d6ea6524fa2a0f1"
+        }
+      ]
+    }
+  }
+}

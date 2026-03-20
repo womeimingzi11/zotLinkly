@@ -41,7 +41,7 @@ These decisions were established during project initialization and should be tre
 - `plugins/zotlinkly-zotero-plugin/addon/`
   Thin Zotero plugin source tree
 - `docs/zotero-plugin-dev.md`
-  Short local development and source-loading notes
+  Local development, package validation, and install-diagnostics notes
 - `test/`
   Node test coverage for:
   - workspace sync
@@ -97,6 +97,12 @@ The plugin is intentionally minimal.
 
 Prefer Zotero's internal JS APIs over direct SQLite access.
 
+The plugin package must be installable as a Zotero 8 add-on, not only source-loadable.
+
+- `manifest.json` must include `applications.zotero.update_url`
+- `strict_max_version` is currently pinned to `8.0.*`
+- package validation should happen before runtime bridge debugging
+
 ## Version Control Policy
 
 This repository is managed with `jj`.
@@ -118,6 +124,12 @@ This repository is managed with `jj`.
   Force a sync pass through the external service
 - `npm run zotero:dev`
   Print the local Zotero source-loading instructions for the plugin
+- `npm run zotero:validate-package`
+  Build the `.xpi`, `updates.json`, and release metadata, then validate the packaged artifact
+- `npm run zotero:prepare-profile`
+  Reset and prepare an isolated Zotero development profile with the packaged addon installed
+- `npm run zotero:diagnose-install`
+  Inspect install registration, cache state, port listening, and bridge reachability for a Zotero profile
 
 ## Current Status
 
@@ -135,16 +147,18 @@ The main missing step is real local integration with a running Zotero instance a
 
 Follow this order:
 
-1. Load the Zotero plugin from source using `npm run zotero:dev`.
-2. Confirm Zotero starts the loopback bridge on `127.0.0.1:23119`.
-3. Run `npm run doctor` and make sure the Zotero bridge becomes reachable.
-4. Create or edit a Zotero item with:
+1. Run `npm run zotero:validate-package`.
+2. Run `npm run zotero:prepare-profile`.
+3. Launch Zotero using the printed isolated-profile command.
+4. Run `npm run zotero:diagnose-install` and make sure the add-on is registered before debugging bridge logic.
+5. Run `npm run doctor` and make sure the Zotero bridge becomes reachable on `127.0.0.1:23121`.
+6. Create or edit a Zotero item with:
    - one attachment
    - one note
    - at least one annotation if possible
-5. Run `npm run sync` and confirm files appear under `~/.zotlinkly/workspace/`.
-6. Point Linkly Desktop at that workspace if it is not already indexed.
-7. Only then test `search_evidence` and `read_context` end to end.
+7. Run `npm run sync` and confirm files appear under `~/.zotlinkly/workspace/`.
+8. Point Linkly Desktop at that workspace if it is not already indexed.
+9. Only then test `search_evidence` and `read_context` end to end.
 
 ## Notes For Future Agents
 

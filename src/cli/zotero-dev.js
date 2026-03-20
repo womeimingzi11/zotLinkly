@@ -45,5 +45,11 @@ lines.push(
 lines.push(
   "5. For later code changes, restart Zotero; if Zotero caches old files, relaunch it with -purgecaches.",
 );
+lines.push("");
+lines.push("Package-based validation workflow:");
+lines.push("1. Run npm run zotero:validate-package");
+lines.push("2. Run npm run zotero:prepare-profile");
+lines.push("3. Launch Zotero with the printed command so it uses an isolated dev profile.");
+lines.push("4. If install still fails, run npm run zotero:diagnose-install");
 
 console.log(lines.join("\n"));
