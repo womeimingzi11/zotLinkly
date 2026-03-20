@@ -57,3 +57,20 @@ test("zotero plugin content script awaits Zotero.Items.getAll before filtering",
   assert.match(source, /await Zotero\.Items\.getAll\(1,\s*false\)/);
   assert.doesNotMatch(source, /Zotero\.Items\.getAll\(1,\s*false\)\s*\.filter/);
 });
+
+test("zotero plugin content script guards annotations to file attachments and awaits tags", () => {
+  const scriptPath = path.join(
+    process.cwd(),
+    "plugins",
+    "zotlinkly-zotero-plugin",
+    "addon",
+    "content",
+    "scripts",
+    "zotlinkly-zotero-plugin.js",
+  );
+  const source = fs.readFileSync(scriptPath, "utf8");
+
+  assert.match(source, /attachment\.isFileAttachment && !attachment\.isFileAttachment\(\)/);
+  assert.match(source, /async function getTags/);
+  assert.match(source, /await Zotero\.Tags\.getAll\(1\)/);
+});

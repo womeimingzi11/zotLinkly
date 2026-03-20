@@ -118,7 +118,11 @@
 
     for (const attachmentID of candidateAttachments) {
       const attachment = Zotero.Items.get(attachmentID);
-      if (!attachment || !attachment.getAnnotations) {
+      if (
+        !attachment ||
+        !attachment.getAnnotations ||
+        (attachment.isFileAttachment && !attachment.isFileAttachment())
+      ) {
         continue;
       }
       for (const annotation of attachment.getAnnotations()) {
@@ -143,8 +147,10 @@
     }));
   }
 
-  function getTags() {
-    return Zotero.Tags.getAll(1).map((tag) => ({
+  async function getTags() {
+    const tags = await Zotero.Tags.getAll(1);
+    const rows = Array.isArray(tags) ? tags : Array.from(tags || []);
+    return rows.map((tag) => ({
       tag: tag.tag,
       type: tag.type,
     }));
@@ -215,7 +221,7 @@
       case "get_collections":
         return getCollections();
       case "get_tags":
-        return getTags();
+        return await getTags();
       case "get_library_snapshot":
         return {
           items: await listItems({}),
@@ -223,7 +229,7 @@
           notes: await listNotes(),
           annotations: await listAnnotations(),
           collections: getCollections(),
-          tags: getTags(),
+          tags: await getTags(),
         };
       default:
         throw new Error(`Unknown RPC method: ${method}`);
