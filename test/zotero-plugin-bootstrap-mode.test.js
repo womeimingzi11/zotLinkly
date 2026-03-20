@@ -86,10 +86,11 @@ test("zotero plugin content script writes HTTP responses as UTF-8 bytes", () => 
     "zotlinkly-zotero-plugin.js",
   );
   const source = fs.readFileSync(scriptPath, "utf8");
+  const responseBuilder = source.slice(source.indexOf("function buildHttpResponse"));
 
-  assert.match(source, /nsIScriptableUnicodeConverter/);
-  assert.match(source, /nsIBinaryOutputStream/);
-  assert.match(source, /Content-Length: \$\{bodyBytes\.length\}/);
-  assert.doesNotMatch(source, /Content-Length: \$\{body\.length\}/);
-  assert.match(source, /binaryOutput\.writeByteArray\(responseBytes,\s*responseBytes\.length\)/);
+  assert.match(source, /nsIConverterOutputStream/);
+  assert.match(source, /converterOutput\.init\(output,\s*"UTF-8"\)/);
+  assert.match(source, /converterOutput\.writeString\(responseText\)/);
+  assert.match(source, /Connection: close\\r\\n\\r\\n/);
+  assert.doesNotMatch(responseBuilder, /Content-Length:/);
 });
