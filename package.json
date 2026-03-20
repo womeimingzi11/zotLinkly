@@ -9,7 +9,8 @@
     "start": "node src/index.js",
     "sync": "node src/cli/sync.js",
     "doctor": "node src/cli/doctor.js",
-    "zotero:dev": "node src/cli/zotero-dev.js"
+    "zotero:dev": "node src/cli/zotero-dev.js",
+    "zotero:package": "node src/cli/package-plugin.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.27.1",

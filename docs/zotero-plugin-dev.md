@@ -74,3 +74,13 @@ Once the plugin is loaded, the next checks are:
 5. Confirm files appear under `~/.zotlinkly/workspace/attachments` and `~/.zotlinkly/workspace/notes`
 
 Only after that should you connect Linkly indexing and test `search_evidence`.
+
+## Fallback: Build An `.xpi`
+
+If source loading is not picked up by Zotero on a given machine, package the addon instead:
+
+```bash
+npm run zotero:package
+```
+
+That writes an `.xpi` into `dist/`, using the plugin id as the filename.
