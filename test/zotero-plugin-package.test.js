@@ -11,7 +11,7 @@ test("buildPackagePlan derives xpi output path from manifest id", () => {
     manifest: {
       applications: {
         zotero: {
-          id: "zotlinkly@local",
+          id: "zotlinkly@zotlinkly.local",
         },
       },
     },
@@ -21,6 +21,9 @@ test("buildPackagePlan derives xpi output path from manifest id", () => {
     plan.pluginRoot,
     path.join("/workspace/repo", "plugins", "zotlinkly-zotero-plugin", "addon"),
   );
-  assert.equal(plan.pluginId, "zotlinkly@local");
-  assert.equal(plan.outputPath, path.join("/workspace/repo/dist", "zotlinkly@local.xpi"));
+  assert.equal(plan.pluginId, "zotlinkly@zotlinkly.local");
+  assert.equal(
+    plan.outputPath,
+    path.join("/workspace/repo/dist", "zotlinkly@zotlinkly.local.xpi"),
+  );
 });

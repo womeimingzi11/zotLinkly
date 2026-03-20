@@ -45,7 +45,7 @@ The minimal workflow is:
 
 1. Close Zotero.
 2. Create an extension proxy file in the `extensions/` directory of the Zotero profile.
-3. Name the file exactly the plugin id: `zotlinkly@local`
+3. Name the file exactly the plugin id: `zotlinkly@zotlinkly.local`
 4. Put the absolute plugin source path into that file:
 
 ```text

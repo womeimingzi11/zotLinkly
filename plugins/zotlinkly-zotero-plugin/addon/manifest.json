@@ -5,7 +5,7 @@
   "description": "Thin Zotero bridge for zotlinkly-mcp",
   "applications": {
     "zotero": {
-      "id": "zotlinkly@local",
+      "id": "zotlinkly@zotlinkly.local",
       "strict_min_version": "7.0",
       "strict_max_version": "8.*"
     }
