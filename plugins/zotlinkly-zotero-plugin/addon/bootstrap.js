@@ -317,10 +317,14 @@ var ZotLinklyBridge = (() => {
   };
 })();
 
-function startup() {
+function install(data, reason) {}
+
+async function startup({ id, version, resourceURI, rootURI }, reason) {
   ZotLinklyBridge.startup();
 }
 
-function shutdown() {
+async function shutdown({ id, version, resourceURI, rootURI }, reason) {
   ZotLinklyBridge.shutdown();
 }
+
+function uninstall(data, reason) {}
