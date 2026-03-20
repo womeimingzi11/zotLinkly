@@ -27,3 +27,16 @@ test("zotero plugin addon root includes prefs.js for bootstrap compatibility", (
   );
   assert.equal(fs.existsSync(prefsPath), true);
 });
+
+test("zotero plugin addon ships a content script entrypoint", () => {
+  const scriptPath = path.join(
+    process.cwd(),
+    "plugins",
+    "zotlinkly-zotero-plugin",
+    "addon",
+    "content",
+    "scripts",
+    "zotlinkly-zotero-plugin.js",
+  );
+  assert.equal(fs.existsSync(scriptPath), true);
+});

@@ -31,4 +31,21 @@ test("bootstrap startup uses Zotero bootstrap-compatible signature", () => {
 
   assert.match(source, /function startup\s*\(\s*\{[^}]*rootURI[^}]*\}\s*,\s*reason\s*\)/);
   assert.match(source, /function shutdown\s*\(\s*\{[^}]*rootURI[^}]*\}\s*,\s*reason\s*\)/);
+  assert.match(source, /registerChrome/);
+  assert.match(source, /loadSubScript/);
+});
+
+test("bootstrap delegates plugin logic to a content script", () => {
+  const bootstrapPath = path.join(
+    process.cwd(),
+    "plugins",
+    "zotlinkly-zotero-plugin",
+    "addon",
+    "bootstrap.js",
+  );
+  const source = fs.readFileSync(bootstrapPath, "utf8");
+
+  assert.match(source, /content\/scripts\/zotlinkly-zotero-plugin\.js/);
+  assert.match(source, /function onMainWindowLoad\s*\(/);
+  assert.match(source, /function onMainWindowUnload\s*\(/);
 });

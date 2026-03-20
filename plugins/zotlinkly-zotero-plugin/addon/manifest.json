@@ -1,13 +1,14 @@
 {
   "manifest_version": 2,
-  "name": "zotlinkly-zotero-plugin",
+  "name": "ZotLinkly Zotero Plugin",
   "version": "0.1.0",
   "description": "Thin Zotero bridge for zotlinkly-mcp",
+  "author": "chenhan",
   "applications": {
     "zotero": {
       "id": "zotlinkly@zotlinkly.local",
-      "strict_min_version": "7.0",
-      "strict_max_version": "8.*"
+      "strict_min_version": "6.999",
+      "strict_max_version": "9.*"
     }
   }
 }
