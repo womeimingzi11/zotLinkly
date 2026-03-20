@@ -34,6 +34,8 @@ console.log(
     `Installed package: ${prepared.installedXpiPath}`,
     `Plugin ID: ${prepared.pluginId}`,
     `Launch command: ${prepared.launchCommand}`,
+    "Note: because this is an app-profile sideload install, Zotero may register the add-on as disabled on first launch.",
+    "If that happens, open Add-ons once and enable ZotLinkly manually, then re-run npm run zotero:diagnose-install.",
     prepared.backups.length > 0 ? "Backups:" : "Backups: none",
     ...prepared.backups.map(
       (entry) => `- ${entry.originalPath} -> ${entry.backupPath}`,

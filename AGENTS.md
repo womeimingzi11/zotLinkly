@@ -102,6 +102,7 @@ The plugin package must be installable as a Zotero 8 add-on, not only source-loa
 - `manifest.json` must include `applications.zotero.update_url`
 - `strict_max_version` is currently pinned to `8.0.*`
 - package validation should happen before runtime bridge debugging
+- for app-profile sideload installs, Zotero may register the add-on disabled on first launch; confirm `userDisabled: false` before treating it as a runtime failure
 
 ## Version Control Policy
 

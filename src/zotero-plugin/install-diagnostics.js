@@ -82,6 +82,20 @@ export async function collectInstallDiagnostics({
   const portMatch = endpoint.match(/:(\d+)$/);
   const port = portMatch ? Number(portMatch[1]) : 23121;
 
+  const activationStatus = !extensionEntry
+    ? "not_registered"
+    : extensionEntry.userDisabled
+      ? "disabled_in_addons_ui"
+      : extensionEntry.active
+        ? "active"
+        : "registered_but_inactive";
+  const activationHint =
+    activationStatus === "disabled_in_addons_ui"
+      ? "The add-on is installed but disabled. Open Zotero Add-ons and enable ZotLinkly once."
+      : activationStatus === "registered_but_inactive"
+        ? "The add-on is registered but not active yet. Restart Zotero and inspect the Browser Console for bootstrap errors."
+        : null;
+
   return {
     profileDir: plan.profileDir,
     zoteroAppPath: plan.appPath,
@@ -94,6 +108,8 @@ export async function collectInstallDiagnostics({
     extensionsJsonPath: plan.extensionsJsonPath,
     addonStartupPath: plan.addonStartupPath,
     registeredInExtensionsJson: Boolean(extensionEntry),
+    activationStatus,
+    activationHint,
     extensionEntry,
     prefsPath: plan.prefsPath,
     prefsCacheKeysPresent:

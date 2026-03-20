@@ -75,11 +75,14 @@ After Zotero starts, inspect the install state with:
 npm run zotero:diagnose-install
 ```
 
+If the add-on shows up in `extensions.json` but `activationStatus` is `disabled_in_addons_ui`, the package is already valid. Zotero has simply registered the sideloaded add-on in a disabled state. Open Add-ons once, enable `ZotLinkly Zotero Plugin`, and rerun the diagnostic.
+
 Expected hard checks:
 
 1. `extensions.json` includes `zotlinkly@zotlinkly.local`
-2. `127.0.0.1:23121` is listening
-3. `npm run doctor` reports `zotero: ok`
+2. `activationStatus` is `active`
+3. `127.0.0.1:23121` is listening
+4. `npm run doctor` reports `zotero: ok`
 
 ## Source Loading Workflow
 
