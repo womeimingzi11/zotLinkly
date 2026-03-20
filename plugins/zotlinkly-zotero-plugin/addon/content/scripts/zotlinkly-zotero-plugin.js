@@ -43,9 +43,14 @@
     state.observerId = null;
   }
 
-  function listItems(params) {
+  async function getAllItems() {
+    const items = await Zotero.Items.getAll(1, false);
+    return Array.isArray(items) ? items : Array.from(items || []);
+  }
+
+  async function listItems(params) {
     const limit = params.limit || undefined;
-    return Zotero.Items.getAll(1, false)
+    return (await getAllItems())
       .filter((item) => item && item.isRegularItem && item.isRegularItem())
       .slice(0, limit)
       .map(serializeItem);
@@ -59,11 +64,11 @@
     return serializeItem(item);
   }
 
-  function listAttachments(itemKey) {
+  async function listAttachments(itemKey) {
     const parent = itemKey ? Zotero.Items.getByLibraryAndKey(1, itemKey) : null;
     const attachmentIDs = parent
       ? parent.getAttachments()
-      : Zotero.Items.getAll(1, false)
+      : (await getAllItems())
           .filter((item) => item && item.isAttachment && item.isAttachment())
           .map((item) => item.id);
 
@@ -84,11 +89,11 @@
     };
   }
 
-  function listNotes(itemKey) {
+  async function listNotes(itemKey) {
     const parent = itemKey ? Zotero.Items.getByLibraryAndKey(1, itemKey) : null;
     const noteIDs = parent
       ? parent.getNotes()
-      : Zotero.Items.getAll(1, false)
+      : (await getAllItems())
           .filter((item) => item && item.isNote && item.isNote())
           .map((item) => item.id);
 
@@ -103,11 +108,11 @@
       }));
   }
 
-  function listAnnotations(itemKey) {
+  async function listAnnotations(itemKey) {
     const rows = [];
     const candidateAttachments = itemKey
       ? (Zotero.Items.getByLibraryAndKey(1, itemKey)?.getAttachments() || [])
-      : Zotero.Items.getAll(1, false)
+      : (await getAllItems())
           .filter((item) => item && item.isAttachment && item.isAttachment())
           .map((item) => item.id);
 
@@ -196,27 +201,27 @@
       case "get_change_cursor":
         return { cursor: state.cursor };
       case "list_items":
-        return listItems(params);
+        return await listItems(params);
       case "get_item":
         return getItem(params.itemKey);
       case "list_attachments":
-        return listAttachments(params.itemKey);
+        return await listAttachments(params.itemKey);
       case "get_attachment_file_path":
         return getAttachmentFilePath(params.attachmentKey);
       case "list_notes":
-        return listNotes(params.itemKey);
+        return await listNotes(params.itemKey);
       case "list_annotations":
-        return listAnnotations(params.itemKey);
+        return await listAnnotations(params.itemKey);
       case "get_collections":
         return getCollections();
       case "get_tags":
         return getTags();
       case "get_library_snapshot":
         return {
-          items: listItems({}),
-          attachments: listAttachments(),
-          notes: listNotes(),
-          annotations: listAnnotations(),
+          items: await listItems({}),
+          attachments: await listAttachments(),
+          notes: await listNotes(),
+          annotations: await listAnnotations(),
           collections: getCollections(),
           tags: getTags(),
         };

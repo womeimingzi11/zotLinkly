@@ -40,3 +40,20 @@ test("zotero plugin addon ships a content script entrypoint", () => {
   );
   assert.equal(fs.existsSync(scriptPath), true);
 });
+
+test("zotero plugin content script awaits Zotero.Items.getAll before filtering", () => {
+  const scriptPath = path.join(
+    process.cwd(),
+    "plugins",
+    "zotlinkly-zotero-plugin",
+    "addon",
+    "content",
+    "scripts",
+    "zotlinkly-zotero-plugin.js",
+  );
+  const source = fs.readFileSync(scriptPath, "utf8");
+
+  assert.match(source, /async function getAllItems/);
+  assert.match(source, /await Zotero\.Items\.getAll\(1,\s*false\)/);
+  assert.doesNotMatch(source, /Zotero\.Items\.getAll\(1,\s*false\)\s*\.filter/);
+});
