@@ -18,7 +18,15 @@ test("tool handlers proxy to service layer with stable payload shapes", async ()
     evidenceService: {
       async searchEvidence(input) {
         assert.equal(input.query, "collective");
-        return [{ evidenceId: "ITEM1:note:NOTE1:doc-1" }];
+        return {
+          mode: "recall",
+          resultShape: "grouped",
+          retrievedCount: 10,
+          mappedCount: 3,
+          groupedCount: 2,
+          evidence: [{ itemKey: "ITEM1" }],
+          diagnostics: { roundsExecuted: 2 },
+        };
       },
       async readContext(input) {
         assert.equal(input.evidenceId, "ITEM1:note:NOTE1:doc-1");
@@ -34,7 +42,13 @@ test("tool handlers proxy to service layer with stable payload shapes", async ()
     bundle: { item: { key: "ITEM1" } },
   });
   assert.deepEqual(await handlers.search_evidence({ query: "collective" }), {
-    evidence: [{ evidenceId: "ITEM1:note:NOTE1:doc-1" }],
+    mode: "recall",
+    resultShape: "grouped",
+    retrievedCount: 10,
+    mappedCount: 3,
+    groupedCount: 2,
+    evidence: [{ itemKey: "ITEM1" }],
+    diagnostics: { roundsExecuted: 2 },
   });
   assert.deepEqual(await handlers.read_context({ evidenceId: "ITEM1:note:NOTE1:doc-1" }), {
     result: { context: { text: "Paragraph" } },

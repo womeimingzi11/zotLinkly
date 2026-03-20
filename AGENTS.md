@@ -60,6 +60,20 @@ The external MCP server should keep the public tool surface narrow:
 
 All evidence returned from Linkly must map back to a Zotero `itemKey`. Unmapped results must be dropped.
 
+`search_evidence` now supports two retrieval modes:
+
+- `recall`
+  default, high-recall multi-query retrieval with paper-level compression
+- `fast`
+  lower-latency retrieval with fewer Linkly rounds
+
+It also supports two result shapes:
+
+- `grouped`
+  default, grouped by Zotero item with representative evidence snippets
+- `flat`
+  flattened snippet list derived from compressed grouped results
+
 ## Sync Model
 
 The external service maintains a Zotero-only workspace under `~/.zotlinkly/`:

@@ -33,7 +33,12 @@ export async function startMcpServer({ libraryService, evidenceService }) {
       tags: z.array(z.string()).optional(),
       collections: z.array(z.string()).optional(),
       years: z.array(z.union([z.string(), z.number()])).optional(),
-      limit: z.number().int().positive().max(100).optional(),
+      limit: z.number().int().positive().max(200).optional(),
+      mode: z.enum(["recall", "fast"]).optional(),
+      resultShape: z.enum(["grouped", "flat"]).optional(),
+      retrieveLimit: z.number().int().positive().max(1000).optional(),
+      perItemEvidenceLimit: z.number().int().positive().max(10).optional(),
+      useModelCompression: z.boolean().optional(),
     },
     async (args) => jsonResult(await handlers.search_evidence(args)),
   );

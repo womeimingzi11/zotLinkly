@@ -24,6 +24,9 @@ export class SQLiteStateStore {
       CREATE INDEX IF NOT EXISTS idx_item_mappings_item_key
       ON item_mappings (item_key);
 
+      CREATE INDEX IF NOT EXISTS idx_item_mappings_doc_id
+      ON item_mappings (doc_id);
+
       CREATE TABLE IF NOT EXISTS sync_state (
         key TEXT PRIMARY KEY,
         value TEXT NOT NULL
@@ -163,6 +166,34 @@ export class SQLiteStateStore {
       .all(`%${pathSuffix}`);
 
     return matches.length === 1 ? matches[0] : null;
+  }
+
+  findMappingByDocId(docId) {
+    if (!docId) {
+      return null;
+    }
+
+    return (
+      this.db
+        .prepare(
+          `
+            SELECT item_key AS itemKey,
+                   source_key AS sourceKey,
+                   source_type AS sourceType,
+                   workspace_path AS workspacePath,
+                   target_path AS targetPath,
+                   title,
+                   content_hash AS contentHash,
+                   doc_id AS docId,
+                   sync_state AS syncState,
+                   updated_at AS updatedAt
+            FROM item_mappings
+            WHERE doc_id = ?
+            LIMIT 1
+          `,
+        )
+        .get(docId) || null
+    );
   }
 
   findEvidenceById(evidenceId) {

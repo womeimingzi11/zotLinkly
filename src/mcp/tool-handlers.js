@@ -4,7 +4,7 @@ export function buildToolHandlers({ libraryService, evidenceService }) {
       return { items: await libraryService.searchItems(input) };
     },
     async search_evidence(input) {
-      return { evidence: await evidenceService.searchEvidence(input) };
+      return await evidenceService.searchEvidence(input);
     },
     async read_context(input) {
       return { result: await evidenceService.readContext(input) };

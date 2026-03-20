@@ -1,5 +1,20 @@
 import path from "node:path";
 
+const SEARCH_STOPWORDS = new Set([
+  "a",
+  "an",
+  "and",
+  "by",
+  "for",
+  "in",
+  "of",
+  "on",
+  "or",
+  "the",
+  "to",
+  "with",
+]);
+
 export function slugify(input) {
   return String(input || "untitled")
     .normalize("NFKD")
@@ -77,6 +92,54 @@ export function matchesQuery(item, query) {
     .join("\n");
 
   return needles.every((needle) => haystack.includes(needle));
+}
+
+export function tokenizeQuery(query) {
+  return String(query || "")
+    .toLowerCase()
+    .match(/[\p{L}\p{N}]+/gu) || [];
+}
+
+export function buildSearchQueries(query, { mode = "recall" } = {}) {
+  const rawQuery = String(query || "").trim().replace(/\s+/g, " ");
+  if (!rawQuery) {
+    return [];
+  }
+
+  const tokens = tokenizeQuery(rawQuery);
+  const significantTokens = tokens.filter(
+    (token) => token.length >= 3 && !SEARCH_STOPWORDS.has(token),
+  );
+  const queries = [];
+  const addQuery = (value) => {
+    const normalized = String(value || "").trim().replace(/\s+/g, " ");
+    if (normalized && !queries.includes(normalized)) {
+      queries.push(normalized);
+    }
+  };
+
+  addQuery(rawQuery);
+  if (tokens.length > 1) {
+    addQuery(`"${rawQuery}"`);
+    addQuery(tokens.slice().reverse().join(" "));
+  }
+
+  if (mode === "fast") {
+    significantTokens.slice(0, 2).forEach(addQuery);
+    return queries.slice(0, 3);
+  }
+
+  for (let index = 0; index < tokens.length - 1; index += 1) {
+    addQuery(`${tokens[index]} ${tokens[index + 1]}`);
+  }
+
+  for (let index = 0; index < tokens.length - 2; index += 1) {
+    addQuery(`${tokens[index]} ${tokens[index + 1]} ${tokens[index + 2]}`);
+  }
+
+  significantTokens.forEach(addQuery);
+
+  return queries.slice(0, 12);
 }
 
 export function ensureArray(value) {
