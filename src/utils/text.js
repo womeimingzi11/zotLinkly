@@ -55,8 +55,12 @@ export function matchesQuery(item, query) {
   if (!query) {
     return true;
   }
-  const needle = query.toLowerCase();
-  const haystacks = [
+  const needles = String(query)
+    .toLowerCase()
+    .split(/\s+/)
+    .map((value) => value.trim())
+    .filter(Boolean);
+  const haystack = [
     item?.title,
     item?.abstractNote,
     item?.publicationTitle,
@@ -69,9 +73,10 @@ export function matchesQuery(item, query) {
     ...(item?.collections || []).map((collection) => collection.name),
   ]
     .filter(Boolean)
-    .map((value) => String(value).toLowerCase());
+    .map((value) => String(value).toLowerCase())
+    .join("\n");
 
-  return haystacks.some((value) => value.includes(needle));
+  return needles.every((needle) => haystack.includes(needle));
 }
 
 export function ensureArray(value) {

@@ -97,3 +97,70 @@ test("readContext prefers outline and returns read payload when mapping exists",
   assert.equal(result.context.text, "Context paragraph");
   assert.equal(result.outline.length, 1);
 });
+
+test("searchEvidence keeps query-matching items even when they appear after unrelated Zotero items", async () => {
+  const unrelatedItems = Array.from({ length: 10 }, (_, index) => ({
+    key: `ITEM${index}`,
+    title: `Unrelated paper ${index}`,
+    date: "2024",
+    creators: [{ firstName: "Ada", lastName: "Lovelace" }],
+    publicationTitle: "Journal of Tests",
+    tags: [],
+    collections: [],
+  }));
+
+  const evidenceService = new EvidenceService({
+    stateStore: {
+      findMappingByPath() {
+        return null;
+      },
+      findMappingByPathSuffix(filePath) {
+        assert.equal(filePath, "/workspace/notes/ITEM11.md");
+        return {
+          itemKey: "ITEM11",
+          sourceKey: "ITEM11",
+          sourceType: "note",
+          workspacePath: "/Users/test/.zotlinkly/workspace/notes/ITEM11.md",
+        };
+      },
+      recordDocId(workspacePath, docId) {
+        assert.equal(workspacePath, "/Users/test/.zotlinkly/workspace/notes/ITEM11.md");
+        assert.equal(docId, "doc-11");
+      },
+    },
+    zoteroClient: {
+      async listItems() {
+        return [
+          ...unrelatedItems,
+          {
+            key: "ITEM11",
+            title: "Spatial ecology of soil nematodes",
+            date: "2024",
+            creators: [{ firstName: "Ting", lastName: "Liu" }],
+            publicationTitle: "Soil Biology and Biochemistry",
+            tags: [],
+            collections: [],
+          },
+        ];
+      },
+    },
+    linklyClient: {
+      async searchDocuments() {
+        return [
+          {
+            doc_id: "doc-11",
+            title: "ITEM11 note",
+            path: ".../workspace/notes/ITEM11.md",
+            snippet: "soil nematode evidence",
+          },
+        ];
+      },
+    },
+  });
+
+  const result = await evidenceService.searchEvidence({ query: "soil nematode", limit: 1 });
+
+  assert.equal(result.length, 1);
+  assert.equal(result[0].itemKey, "ITEM11");
+  assert.equal(result[0].docId, "doc-11");
+});

@@ -1,4 +1,4 @@
-import { buildCitation, matchesQuery, normalizeWorkspacePath } from "../utils/text.js";
+import { buildCitation, normalizeWorkspacePath } from "../utils/text.js";
 
 export class EvidenceService {
   constructor({ stateStore, zoteroClient, linklyClient }) {
@@ -14,12 +14,12 @@ export class EvidenceService {
       tags,
       collections,
       years,
-      limit: Math.max(limit * 3, 20),
+      limit: Math.max(limit * 20, 500),
     });
 
-    const eligibleItems = items
-      .filter((item) => (!itemKeys || itemKeys.length === 0 || itemKeys.includes(item.key)))
-      .slice(0, Math.max(limit, 10));
+    const eligibleItems = items.filter(
+      (item) => !itemKeys || itemKeys.length === 0 || itemKeys.includes(item.key),
+    );
 
     const allowedItemKeys = new Set(eligibleItems.map((item) => item.key));
     const itemByKey = new Map(eligibleItems.map((item) => [item.key, item]));
@@ -32,7 +32,9 @@ export class EvidenceService {
     const evidence = [];
     for (const result of linklyResults) {
       const workspacePath = normalizeWorkspacePath(result.path || result.filePath);
-      const mapping = this.stateStore.findMappingByPath(workspacePath);
+      const mapping =
+        this.stateStore.findMappingByPath(workspacePath) ||
+        this.stateStore.findMappingByPathSuffix?.(toWorkspaceSuffix(workspacePath));
       if (!mapping || !allowedItemKeys.has(mapping.itemKey)) {
         continue;
       }
@@ -80,4 +82,12 @@ export class EvidenceService {
       context,
     };
   }
+}
+
+function toWorkspaceSuffix(filePath) {
+  const normalized = normalizeWorkspacePath(filePath);
+  if (!normalized) {
+    return normalized;
+  }
+  return normalized.replace(/^\.\.\./, "");
 }

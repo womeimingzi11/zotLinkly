@@ -138,6 +138,33 @@ export class SQLiteStateStore {
     );
   }
 
+  findMappingByPathSuffix(pathSuffix) {
+    if (!pathSuffix) {
+      return null;
+    }
+
+    const matches = this.db
+      .prepare(
+        `
+          SELECT item_key AS itemKey,
+                 source_key AS sourceKey,
+                 source_type AS sourceType,
+                 workspace_path AS workspacePath,
+                 target_path AS targetPath,
+                 title,
+                 content_hash AS contentHash,
+                 doc_id AS docId,
+                 sync_state AS syncState,
+                 updated_at AS updatedAt
+          FROM item_mappings
+          WHERE workspace_path LIKE ?
+        `,
+      )
+      .all(`%${pathSuffix}`);
+
+    return matches.length === 1 ? matches[0] : null;
+  }
+
   findEvidenceById(evidenceId) {
     const parts = String(evidenceId).split(":");
     if (parts.length < 4) {

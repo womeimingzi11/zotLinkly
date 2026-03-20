@@ -15,17 +15,25 @@ export class LinklyClient {
   }
 
   async searchDocuments({ query, limit = 10 }) {
-    const result = await this.#callTool("search", { query, limit });
+    const result = await this.#callTool("search", { query, limit, output_format: "json" });
     return normalizeSearchResults(result);
   }
 
   async outlineDocument(docId) {
-    const result = await this.#callTool("outline", { doc_ids: [docId] });
+    const result = await this.#callTool("outline", {
+      doc_ids: [docId],
+      output_format: "json",
+    });
     return result?.outlines || result?.outline || result || [];
   }
 
   async readDocument(docId, offset = 1, limit = 200) {
-    const result = await this.#callTool("read", { doc_id: docId, offset, limit });
+    const result = await this.#callTool("read", {
+      doc_id: docId,
+      offset,
+      limit,
+      output_format: "json",
+    });
     return result?.document || result;
   }
 
