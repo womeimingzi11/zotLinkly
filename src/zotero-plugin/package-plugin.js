@@ -120,7 +120,15 @@ function computeSha256(filePath) {
 }
 
 async function listZipEntries(filePath) {
-  const { stdout } = await execFileAsync("unzip", ["-Z1", filePath]);
+  const { stdout } = await execFileAsync("python3", [
+    "-c",
+    [
+      "import pathlib, sys, zipfile",
+      "archive = pathlib.Path(sys.argv[1])",
+      "with zipfile.ZipFile(archive) as zf:\n    print('\\n'.join(zf.namelist()))",
+    ].join("\n"),
+    filePath,
+  ]);
   return stdout
     .split(/\r?\n/)
     .map((line) => line.trim())
@@ -128,7 +136,17 @@ async function listZipEntries(filePath) {
 }
 
 async function readZipEntry(filePath, entryPath) {
-  const { stdout } = await execFileAsync("unzip", ["-p", filePath, entryPath]);
+  const { stdout } = await execFileAsync("python3", [
+    "-c",
+    [
+      "import pathlib, sys, zipfile",
+      "archive = pathlib.Path(sys.argv[1])",
+      "entry = sys.argv[2]",
+      "with zipfile.ZipFile(archive) as zf:\n    print(zf.read(entry).decode('utf-8'), end='')",
+    ].join("\n"),
+    filePath,
+    entryPath,
+  ]);
   return stdout;
 }
 

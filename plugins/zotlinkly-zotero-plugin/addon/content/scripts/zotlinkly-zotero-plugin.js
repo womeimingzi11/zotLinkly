@@ -1,6 +1,10 @@
 (function () {
   const Cc = Components.classes;
   const Ci = Components.interfaces;
+  const unicodeConverter = Cc[
+    "@mozilla.org/intl/scriptableunicodeconverter"
+  ].createInstance(Ci.nsIScriptableUnicodeConverter);
+  unicodeConverter.charset = "UTF-8";
   const state = {
     cursor: 0,
     observerId: null,
@@ -266,6 +270,10 @@
   async function handleTransport(transport) {
     const input = transport.openInputStream(0, 0, 0);
     const output = transport.openOutputStream(0, 0, 0);
+    const binaryOutput = Cc["@mozilla.org/binaryoutputstream;1"].createInstance(
+      Ci.nsIBinaryOutputStream,
+    );
+    binaryOutput.setOutputStream(output);
     const scriptable = Cc["@mozilla.org/scriptableinputstream;1"].createInstance(
       Ci.nsIScriptableInputStream,
     );
@@ -293,24 +301,25 @@
 
     const bodyIndex = requestText.indexOf("\r\n\r\n");
     const body = bodyIndex === -1 ? "" : requestText.slice(bodyIndex + 4);
-    let responseText = buildHttpResponse(404, { error: { message: "Not found" } });
+    let responseBytes = buildHttpResponse(404, { error: { message: "Not found" } });
 
     try {
       const requestLine = requestText.split("\r\n")[0] || "";
       if (/POST\s+\/rpc\s+HTTP\/1\.[01]/.test(requestLine)) {
         const payload = JSON.parse(body || "{}");
         const result = await handleRpc(payload);
-        responseText = buildHttpResponse(200, { result });
+        responseBytes = buildHttpResponse(200, { result });
       }
     } catch (error) {
-      responseText = buildHttpResponse(500, {
+      responseBytes = buildHttpResponse(500, {
         error: {
           message: error && error.message ? error.message : String(error),
         },
       });
     }
 
-    output.write(responseText, responseText.length);
+    binaryOutput.writeByteArray(responseBytes);
+    binaryOutput.close();
     output.close();
     scriptable.close();
     input.close();
@@ -318,15 +327,17 @@
 
   function buildHttpResponse(status, payload) {
     const body = JSON.stringify(payload);
+    const bodyBytes = unicodeConverter.convertToByteArray(body, {});
     const statusText =
       status === 200 ? "OK" : status === 404 ? "Not Found" : "Internal Server Error";
-    return (
+    const header = (
       `HTTP/1.1 ${status} ${statusText}\r\n` +
       "Content-Type: application/json; charset=utf-8\r\n" +
-      `Content-Length: ${body.length}\r\n` +
-      "Connection: close\r\n\r\n" +
-      body
+      `Content-Length: ${bodyBytes.length}\r\n` +
+      "Connection: close\r\n\r\n"
     );
+    const headerBytes = unicodeConverter.convertToByteArray(header, {});
+    return headerBytes.concat(bodyBytes);
   }
 
   Zotero.ZotLinkly = {

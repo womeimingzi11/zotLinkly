@@ -74,3 +74,22 @@ test("zotero plugin content script guards annotations to file attachments and aw
   assert.match(source, /async function getTags/);
   assert.match(source, /await Zotero\.Tags\.getAll\(1\)/);
 });
+
+test("zotero plugin content script writes HTTP responses as UTF-8 bytes", () => {
+  const scriptPath = path.join(
+    process.cwd(),
+    "plugins",
+    "zotlinkly-zotero-plugin",
+    "addon",
+    "content",
+    "scripts",
+    "zotlinkly-zotero-plugin.js",
+  );
+  const source = fs.readFileSync(scriptPath, "utf8");
+
+  assert.match(source, /nsIScriptableUnicodeConverter/);
+  assert.match(source, /nsIBinaryOutputStream/);
+  assert.match(source, /Content-Length: \$\{bodyBytes\.length\}/);
+  assert.doesNotMatch(source, /Content-Length: \$\{body\.length\}/);
+  assert.match(source, /binaryOutput\.writeByteArray\(responseBytes\)/);
+});
