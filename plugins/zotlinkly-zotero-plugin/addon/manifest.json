@@ -1,0 +1,17 @@
+{
+  "manifest_version": 2,
+  "name": "zotlinkly-zotero-plugin",
+  "version": "0.1.0",
+  "description": "Thin Zotero bridge for zotlinkly-mcp",
+  "applications": {
+    "zotero": {
+      "id": "zotlinkly@local",
+      "strict_min_version": "7.0"
+    }
+  },
+  "background": {
+    "scripts": [
+      "bootstrap.js"
+    ]
+  }
+}

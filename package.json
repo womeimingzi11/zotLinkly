@@ -1,0 +1,17 @@
+{
+  "name": "zotlinkly",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "test:watch": "node --test --watch",
+    "start": "node src/index.js",
+    "sync": "node src/cli/sync.js",
+    "doctor": "node src/cli/doctor.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.27.1",
+    "zod": "^4.3.6"
+  }
+}
