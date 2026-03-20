@@ -10,6 +10,13 @@ The goal of this plugin is narrow:
 - expose a simple change cursor for incremental sync
 - avoid RAG, summarization, or AI-facing MCP logic inside Zotero
 
+This plugin follows Zotero's bootstrap-extension shape:
+
+- root `bootstrap.js`
+- root `manifest.json`
+- root `prefs.js`
+- no WebExtension `background.scripts`
+
 ## What To Do First
 
 Run:
