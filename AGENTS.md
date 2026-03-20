@@ -81,7 +81,7 @@ The current implementation expects:
 The plugin is intentionally minimal.
 
 - It should listen on loopback only.
-- It should expose JSON-RPC at `http://127.0.0.1:23120/rpc`.
+- It should expose JSON-RPC at `http://127.0.0.1:23121/rpc`.
 - It should provide at least:
   - `ping`
   - `list_items`

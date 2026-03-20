@@ -60,7 +60,7 @@ The minimal workflow is:
 After Zotero starts, the bridge should listen on:
 
 ```text
-http://127.0.0.1:23120/rpc
+http://127.0.0.1:23121/rpc
 ```
 
 ## Expected First Checks

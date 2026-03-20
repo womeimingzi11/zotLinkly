@@ -40,7 +40,7 @@ lines.push(
   "3. In the same Zotero profile directory, open prefs.js once and delete any lines containing extensions.lastAppBuildId or extensions.lastAppVersion.",
 );
 lines.push(
-  "4. Restart Zotero. The plugin should appear in Tools -> Add-ons and start its loopback RPC bridge on 127.0.0.1:23120.",
+  "4. Restart Zotero. The plugin should appear in Tools -> Add-ons and start its loopback RPC bridge on 127.0.0.1:23121.",
 );
 lines.push(
   "5. For later code changes, restart Zotero; if Zotero caches old files, relaunch it with -purgecaches.",

@@ -9,7 +9,7 @@ test("default zotero endpoint uses a non-conflicting bridge port", () => {
 
   try {
     const config = getConfig();
-    assert.equal(config.zoteroEndpoint, "http://127.0.0.1:23120");
+    assert.equal(config.zoteroEndpoint, "http://127.0.0.1:23121");
   } finally {
     if (original !== undefined) {
       process.env.ZOTLINKLY_ZOTERO_ENDPOINT = original;
