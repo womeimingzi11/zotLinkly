@@ -91,5 +91,5 @@ test("zotero plugin content script writes HTTP responses as UTF-8 bytes", () => 
   assert.match(source, /nsIBinaryOutputStream/);
   assert.match(source, /Content-Length: \$\{bodyBytes\.length\}/);
   assert.doesNotMatch(source, /Content-Length: \$\{body\.length\}/);
-  assert.match(source, /binaryOutput\.writeByteArray\(responseBytes\)/);
+  assert.match(source, /binaryOutput\.writeByteArray\(responseBytes,\s*responseBytes\.length\)/);
 });

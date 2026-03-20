@@ -318,9 +318,8 @@
       });
     }
 
-    binaryOutput.writeByteArray(responseBytes);
+    binaryOutput.writeByteArray(responseBytes, responseBytes.length);
     binaryOutput.close();
-    output.close();
     scriptable.close();
     input.close();
   }
