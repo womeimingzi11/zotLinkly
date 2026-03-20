@@ -23,3 +23,7 @@ RPC surface:
 - `get_change_cursor`
 
 The intended transport is a loopback-only HTTP JSON-RPC endpoint at `/rpc`.
+
+Default endpoint:
+
+- `http://127.0.0.1:23120/rpc`

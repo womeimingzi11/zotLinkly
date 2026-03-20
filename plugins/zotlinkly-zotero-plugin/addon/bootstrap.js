@@ -5,7 +5,7 @@ var ZotLinklyBridge = (() => {
     cursor: 0,
     observerId: null,
     serverSocket: null,
-    port: 23119,
+    port: 23120,
   };
 
   function bumpCursor() {
