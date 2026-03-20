@@ -6,7 +6,8 @@
   "applications": {
     "zotero": {
       "id": "zotlinkly@local",
-      "strict_min_version": "7.0"
+      "strict_min_version": "7.0",
+      "strict_max_version": "8.*"
     }
   },
   "background": {
